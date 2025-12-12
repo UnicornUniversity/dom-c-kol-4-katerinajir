@@ -25,8 +25,11 @@ export function main(dtoIn) {
 export function generateEmployeeData(dtoIn) {
     let employeeCount = 0;
     let employees = []
+
+    const ageLimits = dtoIn.age;
+  
    while(employeeCount < dtoIn.count){
-      const employee = employeeRandom();
+      const employee = employeeRandom(ageLimits);
       
 
       employees.push(employee);
@@ -38,117 +41,104 @@ export function generateEmployeeData(dtoIn) {
 };
 
 /**
- * Please, add specific description here 
- * @param {Array} employees containing all the mocked employee data
- * @returns {object} statistics of the employees
+ * Počítá různé statistické údaje (průměry, mediány, četnosti úvazků) z pole zaměstnanců.
+ * @param {Array} employeeList - Pole objektů obsahující data zaměstnanců.
+ * @returns {object} Statistický objekt dtoOut se specifickými klíči.
  */
-export function getEmployeeStatistics(employeeList){
+export function getEmployeeStatistics(employeeList) {
     const dtoOut = {};
-   // 1. POČET ZAMĚSTNANCŮ
-    dtoOut.employeeCount = employeeList.length
+    
+    //1. CELKOVÝ POČET ZAMĚSTNANCŮ (total)
+    dtoOut.total = employeeList.length;
 
     
-    // 2. POČET ZAMĚSTNANCŮ PODLE ÚVAZKU
-    dtoOut.workloadCounts = employeeList.reduce((acc, employee) => {
+    //2. POČET ZAMĚSTNANCŮ PODLE ÚVAZKU
+    const counts = employeeList.reduce((acc, employee) => {
         const workload = employee.workload; 
-        
-        // Zvýšíme počítadlo pro daný workload o 1.
         acc[workload] = (acc[workload] || 0) + 1;
-        
         return acc;
-
     }, {});
 
+    // Převedení redukovaného objektu na samostatné klíče
+    dtoOut.workload10 = counts["10"] || 0;
+    dtoOut.workload20 = counts["20"] || 0;
+    dtoOut.workload30 = counts["30"] || 0;
+    dtoOut.workload40 = counts["40"] || 0;
+
     
-    
-    // 3. PRŮMĚR ÚVAZKŮ ŽEN
+    // 3. PRŮMĚR ÚVAZKŮ ŽEN (averageWomenWorkload)
     const femaleEmployees = employeeList.filter(e => e.gender === "female"); 
-    // Vytvoříme pole, kde jsou JEN ženy.
     
     const totalFemaleWorkload = femaleEmployees.reduce((sum, employee) => {
-        // sum je akumulátor, který sčítá úvazky.
         return sum + employee.workload;
-    }, 0); // sum začíná na 0.
+    }, 0); 
     
-    // Průměr = Součet / Počet
-    dtoOut.averageFemaleWorkload = 
-        femaleEmployees.length > 0 
+    // Výpočet průměru a zaokrouhlení na 1 desetinné místo (povolená varianta)
+    const averageWomenWorkloadValue = femaleEmployees.length > 0 
         ? totalFemaleWorkload / femaleEmployees.length 
         : 0;
-        // Kontrola: Pokud není žádná žena, vracíme 0, abychom neřeli nulou.
 
+    dtoOut.averageWomenWorkload = Math.round(averageWomenWorkloadValue * 10) / 10;
         
         
-    // 4. SEŘAZENÝ SEZNAM DLE ÚVAZKU (od nejmenšího po největší)
-    
-    // Vytvoříme KOPii pole pomocí spread operátoru [...], abychom nezměnili původní employeeList!
+    //4. SEŘAZENÝ SEZNAM DLE ÚVAZKU (sortedByWorkload)
+    // Vytvoříme KOPii pole pro řazení
     const sortedEmployees = [...employeeList].sort((a, b) => {
-        // Porovnáváme úvazek A s úvazkem B.
-        // Pokud má A menší úvazek než B, výsledek bude ZÁPORNÝ, a A zůstane první.
-        return a.workload - b.workload; 
+        return a.workload - b.workload; // Numerické řazení (nejmenší -> největší)
     });
     
-    dtoOut.sortedEmployeeListByWorkload = sortedEmployees;
+    dtoOut.sortedByWorkload = sortedEmployees;
 
-    // Vytvoříme pole všech věků, kde každý prvek je desetinné číslo
-const ages = employeeList.map(employee => calculateAge(employee.birthDate));
+    
+    //5. VĚKOVÉ STATISTIKY
+    
+    // Pole všech desetinných věků
+    const ages = employeeList.map(employee => calculateAge(employee.birthDate));
 
-// Součet všech věků
-const totalAge = ages.reduce((sum, age) => sum + age, 0); 
+    // Průměrný věk (averageAge)
+    const totalAge = ages.reduce((sum, age) => sum + age, 0); 
+    dtoOut.averageAge = Math.round((totalAge / ages.length) * 10) / 10; // Zaokrouhlení na 1 desetinné místo
 
-// Průměr a zaokrouhlení na 1 desetinné místo
-dtoOut.averageAge = Math.round((totalAge / ages.length) * 10) / 10;
+    // Minimální a Maximální věk (minAge, maxAge) - celá čísla
+    // Math.floor a Math.ceil pro celočíselný výstup
+    dtoOut.minAge = Math.floor(Math.min(...ages)); 
+    dtoOut.maxAge = Math.ceil(Math.max(...ages)); 
 
-// Spread operátor (...) "rozloží" prvky pole 'ages' jako argumenty funkce Math.min/max
-dtoOut.minAge = Math.floor(Math.min(...ages)); // Nejstarší (nejmenší věk)
-dtoOut.maxAge = Math.ceil(Math.max(...ages));  // Nejmladší (největší věk)
+    // Medián věku (medianAge)
+    const sortedAges = [...ages].sort((a, b) => a - b); 
+    const middleIndex = Math.floor(sortedAges.length / 2);
+    let medianAgeValue;
 
+    if (sortedAges.length % 2 === 0) {
+        const lowerMiddle = sortedAges[middleIndex - 1];
+        const upperMiddle = sortedAges[middleIndex];
+        medianAgeValue = (lowerMiddle + upperMiddle) / 2;
+    } else {
+        medianAgeValue = sortedAges[middleIndex];
+    }
+    
+    dtoOut.medianAge = Math.round(medianAgeValue); //Zaokrouhlení na celé číslo
 
-// 1. Nejprve seřadíme pole ages (od nejmenšího po největší)
-const sortedAges = [...ages].sort((a, b) => a - b); 
-const middleIndex = Math.floor(sortedAges.length / 2); // Např. pro 5 prvků je index 2
+    
+    //6. MEDIÁN ÚVAZKU (medianWorkload)
+    const workloads = employeeList.map(e => e.workload); 
+    const sortedWorkloads = workloads.sort((a, b) => a - b); // numerické řazení
 
-let medianAge;
+    const wlMiddleIndex = Math.floor(sortedWorkloads.length / 2);
+    let medianWorkloadValue;
 
-if (sortedAges.length % 2 === 0) {
-    // Případ SUDÉHO počtu prvků (např. 10 zaměstnanců)
-    // Bereme průměr ze dvou prostředních: index (N/2 - 1) a index (N/2)
-    const lowerMiddle = sortedAges[middleIndex - 1];
-    const upperMiddle = sortedAges[middleIndex];
-    medianAge = (lowerMiddle + upperMiddle) / 2;
-} else {
-    // Případ LICHÉHO počtu prvků (např. 9 zaměstnanců)
-    // Bereme přesně prostřední prvek
-    medianAge = sortedAges[middleIndex];
+    if (sortedWorkloads.length % 2 === 0) {
+        const lowerMiddle = sortedWorkloads[wlMiddleIndex - 1];
+        const upperMiddle = sortedWorkloads[wlMiddleIndex];
+        medianWorkloadValue = (lowerMiddle + upperMiddle) / 2;
+    } else {
+        medianWorkloadValue = sortedWorkloads[wlMiddleIndex];
+    }
+    
+    dtoOut.medianWorkload = Math.round(medianWorkloadValue); // Zaokrouhlení na celé číslo
+
+    return dtoOut;
 }
-
-dtoOut.medianAge = Math.round(medianAge * 10) / 10; // Zaokrouhlení na 1 desetinné místo
-
-
-
-// 5. MEDIÁN ÚVAZKU
-const workloads = employeeList.map(e => e.workload); // Pole [10, 20, 40, 30, ...]
-const sortedWorkloads = workloads.sort((a, b) => a - b);
-
-const wlMiddleIndex = Math.floor(sortedWorkloads.length / 2);
-let medianWorkload;
-
-if (sortedWorkloads.length % 2 === 0) {
-    // Sudý počet
-    const lowerMiddle = sortedWorkloads[wlMiddleIndex - 1];
-    const upperMiddle = sortedWorkloads[wlMiddleIndex];
-    medianWorkload = (lowerMiddle + upperMiddle) / 2;
-} else {
-    // Lichý počet
-    medianWorkload = sortedWorkloads[wlMiddleIndex];
-}
-
-dtoOut.medianWorkload = medianWorkload;
-
-return dtoOut;
-}
-
-
 //VSTUPNÍ DATA
 
 const names = {
@@ -209,7 +199,7 @@ function randomBday(minAge, maxAge) {
 }
  
 
-function employeeRandom(){
+function employeeRandom(ageLimits){
     let genderOpt = ["female", "male"];
     let name = "";
     let surname = "";
@@ -225,7 +215,7 @@ function employeeRandom(){
         
     };
 
-    let birthDate = randomBday(dtoIn.age.min, dtoIn.age.max);
+    let birthDate = randomBday(ageLimits.min, ageLimits.max);
 
     birthDate.setUTCHours(0, 0, 0, 0);
 
