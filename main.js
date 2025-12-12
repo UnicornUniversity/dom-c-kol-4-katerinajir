@@ -107,36 +107,39 @@ dtoOut.medianWorkload = medianWorkloadValue;
 
     
 //6. VĚKOVÉ STATISTIKY
-    
-    // Pole všech desetinných věků
-    const ages = employeeList.map(employee => calculateAge(employee.birthdate));
 
-    // Průměrný věk (averageAge)
-    const totalAge = ages.reduce((sum, age) => sum + age, 0); 
-    dtoOut.averageAge = Math.round((totalAge / ages.length) * 10) / 10; // Zaokrouhlení na 1 desetinné místo
+const ages = employeeList.map(employee => calculateAge(employee.birthdate));
 
-    // Minimální a Maximální věk (minAge, maxAge) - celá čísla
-    // Math.floor a Math.ceil pro celočíselný výstup
-    dtoOut.minAge = Math.floor(Math.min(...ages)); 
-    dtoOut.maxAge = Math.floor(Math.max(...ages)); 
+// průměr
+let sumAge = 0;
+let minAgeDec = Infinity;
+let maxAgeDec = -Infinity;
 
-    // Medián věku (medianAge)
-    const sortedAges = [...ages].sort((a, b) => a - b); 
-    const middleIndexAge = Math.floor(sortedAges.length / 2);
-    let medianAgeValue;
-
-    if (sortedAges.length % 2 === 0) {
-        const lowerMiddle = sortedAges[middleIndexAge - 1];
-        const upperMiddle = sortedAges[middleIndexAge];
-        medianAgeValue = (lowerMiddle + upperMiddle) / 2;
-    } else {
-        medianAgeValue = sortedAges[middleIndexAge];
-    }
-    
-    dtoOut.medianAge = Math.round(medianAgeValue); //Zaokrouhlení na celé číslo
-
-    return dtoOut;
+for (const a of ages) {
+  sumAge += a;
+  if (a < minAgeDec) minAgeDec = a;
+  if (a > maxAgeDec) maxAgeDec = a;
 }
+
+dtoOut.averageAge = Math.round((sumAge / ages.length) * 10) / 10;
+
+// min/max jako CELÁ ČÍSLA
+dtoOut.minAge = Math.floor(minAgeDec);
+dtoOut.maxAge = Math.ceil(maxAgeDec);
+
+// medián
+const sortedAges = [...ages].sort((a, b) => a - b);
+const mid = Math.floor(sortedAges.length / 2);
+
+let medianAgeValue;
+if (sortedAges.length % 2 === 0) {
+  medianAgeValue = (sortedAges[mid - 1] + sortedAges[mid]) / 2;
+} else {
+  medianAgeValue = sortedAges[mid];
+}
+
+dtoOut.medianAge = Math.round(medianAgeValue);
+
 
 
     
