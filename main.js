@@ -48,11 +48,11 @@ export function generateEmployeeData(dtoIn) {
 export function getEmployeeStatistics(employeeList) {
     const dtoOut = {};
     
-    //1. CELKOVÝ POČET ZAMĚSTNANCŮ (total)
+//1. CELKOVÝ POČET ZAMĚSTNANCŮ (total)
     dtoOut.total = employeeList.length;
 
     
-    //2. POČET ZAMĚSTNANCŮ PODLE ÚVAZKU
+//2. POČET ZAMĚSTNANCŮ PODLE ÚVAZKU
     const counts = employeeList.reduce((acc, employee) => {
         const workload = employee.workload; 
         acc[workload] = (acc[workload] || 0) + 1;
@@ -66,7 +66,7 @@ export function getEmployeeStatistics(employeeList) {
     dtoOut.workload40 = counts["40"] || 0;
 
     
-    // 3. PRŮMĚR ÚVAZKŮ ŽEN (averageWomenWorkload)
+// 3. PRŮMĚR ÚVAZKŮ ŽEN (averageWomenWorkload)
     const femaleEmployees = employeeList.filter(e => e.gender === "female"); 
     
     const totalFemaleWorkload = femaleEmployees.reduce((sum, employee) => {
@@ -81,7 +81,7 @@ export function getEmployeeStatistics(employeeList) {
     dtoOut.averageWomenWorkload = Math.round(averageWomenWorkloadValue * 10) / 10;
         
         
-    //4. SEŘAZENÝ SEZNAM DLE ÚVAZKU (sortedByWorkload)
+//4. SEŘAZENÝ SEZNAM DLE ÚVAZKU (sortedByWorkload)
     // Vytvoříme KOPii pole pro řazení
     const sortedEmployees = [...employeeList].sort((a, b) => {
         return a.workload - b.workload; // Numerické řazení (nejmenší -> největší)
@@ -89,8 +89,12 @@ export function getEmployeeStatistics(employeeList) {
     
     dtoOut.sortedByWorkload = sortedEmployees;
 
+//5. MEDIÁN ÚVAZKU (medianWorkload)
+    const middleIndex = Math.floor(sortedEmployees.length / 2);
+    dtoOut.medianWorkload = sortedEmployees[middleIndex].workload;
+
     
-    //5. VĚKOVÉ STATISTIKY
+//6. VĚKOVÉ STATISTIKY
     
     // Pole všech desetinných věků
     const ages = employeeList.map(employee => calculateAge(employee.birthdate));
@@ -119,26 +123,11 @@ export function getEmployeeStatistics(employeeList) {
     
     dtoOut.medianAge = Math.round(medianAgeValue); //Zaokrouhlení na celé číslo
 
+
+
+
     
-    //6. MEDIÁN ÚVAZKU (medianWorkload)
-    const workloads = employeeList.map(e => e.workload); 
-    const sortedWorkloads = workloads.sort((a, b) => a - b); // numerické řazení
 
-    const wlMiddleIndex = Math.floor(sortedWorkloads.length / 2);
-    let medianWorkloadValue;
-
-    if (sortedWorkloads.length % 2 === 0) {
-        const lowerMiddle = sortedWorkloads[wlMiddleIndex - 1];
-        const upperMiddle = sortedWorkloads[wlMiddleIndex];
-        medianWorkloadValue = (lowerMiddle + upperMiddle) / 2;
-    } else {
-        medianWorkloadValue = sortedWorkloads[wlMiddleIndex];
-    }
-    
-    dtoOut.medianWorkload = Math.round(medianWorkloadValue); // Zaokrouhlení na celé číslo
-
-    return dtoOut;
-}
 //VSTUPNÍ DATA
 
 const names = {
@@ -216,10 +205,7 @@ function employeeRandom(ageLimits){
     };
 
     let birthdate = randomBday(ageLimits.min, ageLimits.max);
-
-    birthdate.setUTCHours(0, 0, 0, 0);
-
-    birthdate = birthdate.toISOString();
+    ok birthdate = birthdate.toISOString();
 
     let workload = workLoadOpt[Math.floor(Math.random() * workLoadOpt.length)];
 
