@@ -149,6 +149,45 @@ return dtoOut;
 }
 
 
+//VSTUPNÍ DATA
+
+const names = {
+    fNamesF:[
+        "Anna", "Eliška", "Adéla", "Tereza", "Kristýna",
+    "Karolína", "Klára", "Sára", "Natálie", "Nikola",
+    "Barbora", "Kateřina", "Markéta", "Lucie", "Veronika",
+    "Michaela", "Jana", "Šárka", "Denisa", "Alena",
+    "Marie", "Zuzana", "Pavla", "Lenka", "Monika"
+    ],
+
+    lNamesF: [  "Nováková", "Svobodová", "Novotná", "Dvořáková", "Černá",
+  "Procházková", "Kučerová", "Veselá", "Horáková", "Němcová",
+  "Pokorná", "Marková", "Hájková", "Králová", "Jelínková",
+  "Krejčová", "Růžičková", "Benešová", "Fialová", "Sedláčková",
+  "Doležalová", "Zemanová", "Kolářová", "Vaňková", "Kadlecová"
+    ],
+
+    fNamesM: [
+        "Jan", "Jakub", "Tomáš", "Adam", "Matěj",
+    "Vojtěch", "Lukáš", "Ondřej", "Petr", "Josef",
+    "David", "Daniel", "Michal", "Martin", "Šimon",
+    "Tadeáš", "Filip", "Marek", "Roman", "Václav",
+    "Radek", "Karel", "Jaroslav", "Patrik", "Dominik"
+    ],
+
+    lNamesM: [
+         "Novák", "Svoboda", "Novotný", "Dvořák", "Černý",
+  "Procházka", "Kučera", "Veselý", "Horák", "Němec",
+  "Pokorný", "Marek", "Hájek", "Král", "Jelínek",
+  "Krejčí", "Růžička", "Beneš", "Fiala", "Sedláček",
+  "Doležal", "Zeman", "Kolář", "Vaněk", "Kadlec"
+    ],
+};
+
+
+const workLoadOpt = [10, 20, 30, 40];
+
+
 //POMOCNÉ FUNKCE 
 
 function randomBday(minAge, maxAge) {
