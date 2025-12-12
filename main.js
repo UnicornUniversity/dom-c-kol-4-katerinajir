@@ -60,10 +60,10 @@ export function getEmployeeStatistics(employeeList) {
     }, {});
 
     // Převedení redukovaného objektu na samostatné klíče
-    dtoOut.workload10 = counts["10"] || 0;
-    dtoOut.workload20 = counts["20"] || 0;
-    dtoOut.workload30 = counts["30"] || 0;
-    dtoOut.workload40 = counts["40"] || 0;
+    dtoOut.workload10 = counts[10] || 0;
+    dtoOut.workload20 = counts[20] || 0;
+    dtoOut.workload30 = counts[30] || 0;
+    dtoOut.workload40 = counts[40] || 0;
 
     
 // 3. PRŮMĚR ÚVAZKŮ ŽEN (averageWomenWorkload)
@@ -89,9 +89,21 @@ export function getEmployeeStatistics(employeeList) {
     
     dtoOut.sortedByWorkload = sortedEmployees;
 
+  
 //5. MEDIÁN ÚVAZKU (medianWorkload)
-    const middleIndexWorkload = Math.floor(sortedEmployees.length / 2);
-    dtoOut.medianWorkload = sortedEmployees[middleIndexWorkload].workload;
+const workloads = employeeList.map(e => e.workload).sort((a, b) => a - b);
+const middleIndexWorkload = Math.floor(workloads.length / 2);
+
+let medianWorkloadValue;
+if (workloads.length % 2 === 0) {
+  medianWorkloadValue = (workloads[middleIndexWorkload - 1] + workloads[middleIndexWorkload]) / 2;
+} else {
+  medianWorkloadValue = workloads[middleIndexWorkload];
+}
+
+dtoOut.medianWorkload = medianWorkloadValue;
+
+
 
     
 //6. VĚKOVÉ STATISTIKY
