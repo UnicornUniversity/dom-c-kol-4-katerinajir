@@ -93,7 +93,7 @@ export function getEmployeeStatistics(employeeList) {
     //5. VĚKOVÉ STATISTIKY
     
     // Pole všech desetinných věků
-    const ages = employeeList.map(employee => calculateAge(employee.birthDate));
+    const ages = employeeList.map(employee => calculateAge(employee.birthdate));
 
     // Průměrný věk (averageAge)
     const totalAge = ages.reduce((sum, age) => sum + age, 0); 
@@ -215,11 +215,11 @@ function employeeRandom(ageLimits){
         
     };
 
-    let birthDate = randomBday(ageLimits.min, ageLimits.max);
+    let birthdate = randomBday(ageLimits.min, ageLimits.max);
 
-    birthDate.setUTCHours(0, 0, 0, 0);
+    birthdate.setUTCHours(0, 0, 0, 0);
 
-    birthDate = birthDate.toISOString();
+    birthdate = birthdate.toISOString();
 
     let workload = workLoadOpt[Math.floor(Math.random() * workLoadOpt.length)];
 
@@ -227,7 +227,7 @@ function employeeRandom(ageLimits){
         name,
         surname,
         gender,
-        birthDate,
+        birthdate,
         workload
 
     };
@@ -235,9 +235,9 @@ function employeeRandom(ageLimits){
 
 };
 
-function calculateAge(birthDate) {
+function calculateAge(birthdate) {
     const today = new Date();
-    const bday = new Date(birthDate); // Převedeme řetězec na objekt Datum
+    const bday = new Date(birthdate); // Převedeme řetězec na objekt Datum
     
     // Vypočteme rozdíl v milisekundách mezi dneškem a datem narození
     const diff_ms = today.getTime() - bday.getTime(); 
