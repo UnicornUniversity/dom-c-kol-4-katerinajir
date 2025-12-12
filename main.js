@@ -90,8 +90,8 @@ export function getEmployeeStatistics(employeeList) {
     dtoOut.sortedByWorkload = sortedEmployees;
 
 //5. MEDIÁN ÚVAZKU (medianWorkload)
-    const middleIndex = Math.floor(sortedEmployees.length / 2);
-    dtoOut.medianWorkload = sortedEmployees[middleIndex].workload;
+    const middleIndexWorkload = Math.floor(sortedEmployees.length / 2);
+    dtoOut.medianWorkload = sortedEmployees[middleIndexWorkload].workload;
 
     
 //6. VĚKOVÉ STATISTIKY
@@ -110,20 +110,21 @@ export function getEmployeeStatistics(employeeList) {
 
     // Medián věku (medianAge)
     const sortedAges = [...ages].sort((a, b) => a - b); 
-    const middleIndex = Math.floor(sortedAges.length / 2);
+    const middleIndexAge = Math.floor(sortedAges.length / 2);
     let medianAgeValue;
 
     if (sortedAges.length % 2 === 0) {
-        const lowerMiddle = sortedAges[middleIndex - 1];
-        const upperMiddle = sortedAges[middleIndex];
+        const lowerMiddle = sortedAges[middleIndexAge - 1];
+        const upperMiddle = sortedAges[middleIndexAge];
         medianAgeValue = (lowerMiddle + upperMiddle) / 2;
     } else {
-        medianAgeValue = sortedAges[middleIndex];
+        medianAgeValue = sortedAges[middleIndexAge];
     }
     
     dtoOut.medianAge = Math.round(medianAgeValue); //Zaokrouhlení na celé číslo
 
-
+    return dtoOut;
+}
 
 
     
@@ -205,7 +206,7 @@ function employeeRandom(ageLimits){
     };
 
     let birthdate = randomBday(ageLimits.min, ageLimits.max);
-    ok birthdate = birthdate.toISOString();
+    birthdate = birthdate.toISOString();
 
     let workload = workLoadOpt[Math.floor(Math.random() * workLoadOpt.length)];
 
