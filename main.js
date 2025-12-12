@@ -140,6 +140,9 @@ if (sortedAges.length % 2 === 0) {
 
 dtoOut.medianAge = Math.round(medianAgeValue);
 
+return dtoOut;
+}
+
 
 
     
