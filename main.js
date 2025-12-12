@@ -102,7 +102,7 @@ export function getEmployeeStatistics(employeeList) {
     // Minimální a Maximální věk (minAge, maxAge) - celá čísla
     // Math.floor a Math.ceil pro celočíselný výstup
     dtoOut.minAge = Math.floor(Math.min(...ages)); 
-    dtoOut.maxAge = Math.ceil(Math.max(...ages)); 
+    dtoOut.maxAge = Math.floor(Math.max(...ages)); 
 
     // Medián věku (medianAge)
     const sortedAges = [...ages].sort((a, b) => a - b); 
