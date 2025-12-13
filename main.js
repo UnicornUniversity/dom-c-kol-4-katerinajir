@@ -142,7 +142,7 @@ dtoOut.averageAge = Math.round((sumAge / ages.length) * 10) / 10;
 
 // min/max jako CELÁ ČÍSLA
 dtoOut.minAge = Math.floor(minAgeDec);
-dtoOut.maxAge = Math.ciel(maxAgeDec);
+dtoOut.maxAge = Math.ceil(maxAgeDec);
 
 // medián
 const sortedAges = [...ages].sort((a, b) => a - b);
