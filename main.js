@@ -47,6 +47,23 @@ export function generateEmployeeData(dtoIn) {
  */
 export function getEmployeeStatistics(employeeList) {
     const dtoOut = {};
+
+  // V případě prázdného pole
+    if (employeeList.length === 0) {
+        dtoOut.total = 0;
+        dtoOut.workload10 = 0;
+        dtoOut.workload20 = 0;
+        dtoOut.workload30 = 0;
+        dtoOut.workload40 = 0;
+        dtoOut.averageWomenWorkload = 0;
+        dtoOut.sortedByWorkload = [];
+        dtoOut.averageAge = 0;
+        dtoOut.minAge = 0;
+        dtoOut.maxAge = 0;
+        dtoOut.medianAge = 0;
+        dtoOut.medianWorkload = 0;
+        return dtoOut; 
+    }
     
 //1. CELKOVÝ POČET ZAMĚSTNANCŮ (total)
     dtoOut.total = employeeList.length;
@@ -101,7 +118,7 @@ if (workloads.length % 2 === 0) {
   medianWorkloadValue = workloads[middleIndexWorkload];
 }
 
-dtoOut.medianWorkload = medianWorkloadValue;
+dtoOut.medianWorkload = Math.round(medianWorkloadValue);
 
 
 
@@ -125,7 +142,7 @@ dtoOut.averageAge = Math.round((sumAge / ages.length) * 10) / 10;
 
 // min/max jako CELÁ ČÍSLA
 dtoOut.minAge = Math.floor(minAgeDec);
-dtoOut.maxAge = Math.floor(maxAgeDec);
+dtoOut.maxAge = Math.ciel(maxAgeDec);
 
 // medián
 const sortedAges = [...ages].sort((a, b) => a - b);
