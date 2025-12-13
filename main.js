@@ -23,22 +23,22 @@ export function main(dtoIn) {
  * @returns {Array} of employees
  */
 export function generateEmployeeData(dtoIn) {
-    let employeeCount = 0;
-    let employees = []
+  let employeeCount = 0;
+  let employees = [];
 
-    const ageLimits = dtoIn.age;
-  
-   while(employeeCount < dtoIn.count){
-      const employee = employeeRandom(ageLimits);
-      
+  const ageLimits = dtoIn.age;
 
-      employees.push(employee);
+  const birthdates = generateUniqueBirthdates(dtoIn.count, ageLimits.min, ageLimits.max);
 
-      employeeCount++;
-    };
+  while (employeeCount < dtoIn.count) {
+    const employee = employeeRandom(ageLimits, birthdates[employeeCount]);
+    employees.push(employee);
+    employeeCount++;
+  }
 
- return employees;
-};
+  return employees;
+}
+
 
 /**
  * Počítá různé statistické údaje (průměry, mediány, četnosti úvazků) z pole zaměstnanců.
@@ -222,37 +222,31 @@ function randomBday(minAge, maxAge) {
 }
  
 
-function employeeRandom(ageLimits){
-    let genderOpt = ["female", "male"];
-    let name = "";
-    let surname = "";
+function employeeRandom(ageLimits, birthdateIso) {
+  let genderOpt = ["female", "male"];
+  let name = "";
+  let surname = "";
 
-    let gender = genderOpt[Math.floor(Math.random() * genderOpt.length)];
+  let gender = genderOpt[Math.floor(Math.random() * genderOpt.length)];
 
-    if(gender === "female"){
-        name = names.fNamesF[Math.floor(Math.random() * names.fNamesF.length)]
-        surname = names.lNamesF[Math.floor(Math.random() * names.lNamesF.length)]    
-    } else if(gender === "male"){
-        name = names.fNamesM[Math.floor(Math.random() * names.fNamesM.length)]
-        surname = names.lNamesM[Math.floor(Math.random() * names.lNamesM.length)]
-        
-    };
+  if (gender === "female") {
+    name = names.fNamesF[Math.floor(Math.random() * names.fNamesF.length)];
+    surname = names.lNamesF[Math.floor(Math.random() * names.lNamesF.length)];
+  } else {
+    name = names.fNamesM[Math.floor(Math.random() * names.fNamesM.length)];
+    surname = names.lNamesM[Math.floor(Math.random() * names.lNamesM.length)];
+  }
 
-    let birthdate = randomBday(ageLimits.min, ageLimits.max);
-    birthdate.setUTCHours(0, 0, 0, 0);
-    birthdate = birthdate.toISOString();
+  let workload = workLoadOpt[Math.floor(Math.random() * workLoadOpt.length)];
 
-    let workload = workLoadOpt[Math.floor(Math.random() * workLoadOpt.length)];
-
-    return{
-        name,
-        surname,
-        gender,
-        birthdate,
-        workload
-
-    };
-
+  return {
+    name,
+    surname,
+    gender,
+    birthdate: birthdateIso,
+    workload
+  };
+}
 
 };
 
@@ -272,3 +266,34 @@ function calculateAge(birthdate) {
 
     return age;
 }
+
+function generateUniqueBirthdates(count, minAge, maxAge) {
+  const today = new Date();
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const MS_PER_YEAR = 365.25 * MS_PER_DAY;
+
+  const start = new Date(today.getTime() - maxAge * MS_PER_YEAR);
+  const end = new Date(today.getTime() - minAge * MS_PER_YEAR);
+
+  start.setUTCHours(0, 0, 0, 0);
+  end.setUTCHours(0, 0, 0, 0);
+
+  const days = [];
+  for (let t = start.getTime(); t <= end.getTime(); t += MS_PER_DAY) {
+    days.push(new Date(t).toISOString());
+  }
+
+  shuffleInPlace(days);
+
+  return days.slice(0, count);
+}
+
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+}
+
