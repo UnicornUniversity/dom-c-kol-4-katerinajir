@@ -245,10 +245,8 @@ function employeeRandom(ageLimits, birthdateIso) {
     gender,
     birthdate: birthdateIso,
     workload
-  };
+  }
 }
-
-};
 
 function calculateAge(birthdate) {
     const today = new Date();
