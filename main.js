@@ -127,7 +127,6 @@ dtoOut.medianWorkload = Math.round(medianWorkloadValue);
 
 const ages = employeeList.map(employee => calculateAge(employee.birthdate));
 
-// průměr
 let sumAge = 0;
 let minAgeDec = Infinity;
 let maxAgeDec = -Infinity;
@@ -140,11 +139,9 @@ for (const a of ages) {
 
 dtoOut.averageAge = Math.round((sumAge / ages.length) * 10) / 10;
 
-// min/max jako CELÁ ČÍSLA
-dtoOut.minAge = Math.floor(minAgeDec);
-dtoOut.maxAge = Math.floor(maxAgeDec);
+dtoOut.minAge = (minAgeDec | 0);
+dtoOut.maxAge = (maxAgeDec | 0);
 
-// medián
 const sortedAges = [...ages].sort((a, b) => a - b);
 const mid = Math.floor(sortedAges.length / 2);
 
@@ -155,7 +152,8 @@ if (sortedAges.length % 2 === 0) {
   medianAgeValue = sortedAges[mid];
 }
 
-dtoOut.medianAge = Math.round(medianAgeValue);
+dtoOut.medianAge = (medianAgeValue | 0);
+
 
 return dtoOut;
 }
